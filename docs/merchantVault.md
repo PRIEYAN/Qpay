@@ -3,6 +3,8 @@
 
 *Architecture Document — v0.1 Draft*
 
+> **⚠ SUPERSEDED.** This is an earlier, generic multi-chain merchant-vault concept (UMID, per-chain custodial vaults, Circle-wallet-based AI agent bridging) that predates Qpay's current direction and has no XRP/FXRP/FAssets dependency. The current design in [plan.md](plan.md) and [implementation.md](implementation.md) makes FAssets/FXRP the load-bearing, non-optional core of the product — remove FAssets and the product breaks, per `plan.md` §6. Kept for historical reference only; do not build the vault/UMID product described here. The parts of this doc still in active use are the threat-model patterns `plan.md` explicitly inherits and cites by section (§5 dual-authorization / EIP-712 withdrawal signatures, §8 "database is a read replica, never a write authority," §9 regulatory-reach-follows-custody framing) — those are restated directly in `plan.md` itself, so treat `plan.md` as the current source even for those inherited rules.
+
 > **What this document is:** A working architecture spec for a multi-chain merchant payment platform — a universal merchant identity (UMID), deterministic per-chain vaults, custodial fund handling with dual-authorized withdrawals, flexible cross-chain settlement, and an AI-agent orchestration layer. Written to be reusable across hackathon submissions and grant applications, and as the reference doc for actual implementation.
 
 ---

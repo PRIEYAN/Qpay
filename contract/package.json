@@ -1,5 +1,21 @@
 {
   "name": "contract",
   "version": "1.0.0",
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:solidity": "hardhat test solidity",
+    "test:mocha": "hardhat test mocha",
+    "deploy:coston2": "hardhat ignition deploy ignition/modules/Qpay.ts --network coston2",
+    "deploy:flare": "hardhat ignition deploy ignition/modules/Qpay.ts --network flare"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox-mocha-ethers": "^3.0.0",
+    "hardhat": "^3.0.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.1.0"
+  }
 }

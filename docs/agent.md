@@ -1,31 +1,43 @@
 # Chain-Selection Agent
 
 > Status: Design v1.0 · Runtime: Groq (LLM inference) · Live data: CoinMarketCap API
+> Scope note: this agent chooses among **Qpay's own FAssets-backed egress/ingress routes only** — see §2.1. It is not a general-purpose multi-chain router.
 
 ## 1. What this agent does
 
-Qpay's core design (see `plan.md`) removes bridging from the payment path by keeping settlement on a single chain (Flare) and only touching other chains at the ingress/egress edges. Those edges are exactly where a bridge, a swap route, or a withdrawal network still has to be *chosen* — and the cost of that choice varies constantly: gas on one chain spikes while another is idle, a token's bridge fee on one route is a flat $0.30 and on another is 0.3% of notional.
+Qpay's core design (see `plan.md`) removes bridging from the payment path by keeping settlement on a single chain (Flare) and only touching other chains at the ingress/egress edges — exactly the zone-1/zone-3 boundary in `plan.md` §4.1. Those edges are exactly where a route still has to be *chosen*, and the cost of that choice varies constantly: FAssets redemption fees, XRPL network conditions, and FLR gas price all move independently.
 
-The chain-selection agent is a small decision-making step that sits at those edges. Before Qpay executes an ingress (funding in) or egress (cash-out) transaction, the agent looks at live network conditions across the candidate chains/routes and recommends the one that minimizes total cost (gas + bridge/relayer fee) for that specific transfer, given its asset and size.
+The chain-selection agent is a small decision-making step that sits at those edges. Before Qpay executes an ingress (funding in) or egress (cash-out) transaction, the agent looks at live network conditions across the candidate routes and recommends the one that minimizes total cost (gas + FAssets fee) for that specific transfer, given its asset and size.
 
 It does **not** authorize fund movement and it is not on the trust path — same non-negotiable rule as the rest of Qpay: *the agent recommends, the user/contract still enforces.* If the agent is wrong, slow, or down, the system falls back to a static default route and nothing breaks.
 
+### 2.1 The candidate set is fixed, not open-ended
+
+This is the scope constraint that matters most: the agent never chooses among arbitrary chains or arbitrary bridges. It only ranks routes that already exist inside Qpay's FAssets-backed asset model (`plan.md` §3, §6):
+
+| Primary asset | Route(s) the agent can recommend among |
+|---|---|
+| **FXRP** | FAssets `redeem` → real XRP on XRP Ledger (the only egress path for XRP; no bridge alternative exists or is wanted) |
+| **FLR** | Direct transfer on Flare C-chain (single route — nothing to select between) |
+| **USDT0** | Stay on Flare (zero egress cost) vs. Stargate bridge off-Flare (mainnet-only, post-hackathon) |
+
+FXRP is deliberately a **one-route asset** in this table — there is no non-FAssets way to get real XRP out of Qpay, and the agent is not there to invent one. Its job for FXRP is narrower: deciding *when* to redeem and *how many lots* to batch, not *which chain* to redeem to. This is the direct consequence of `plan.md` §6's claim that FAssets is load-bearing — an agent that could route around FXRP/FAssets for XRP would contradict the product's central thesis. USDT0 is the only asset with a genuine multi-route choice, and only on mainnet.
+
 ## 2. Why an LLM agent instead of a fixed rule table
 
-A hand-written rule table ("if amount < $10 use route A") works until fee curves shift — and they shift hourly. Gas prices, CEX/DEX-derived token prices, and network congestion move independently and the *cheapest* choice depends on all three at once. Framing the decision as an LLM call over live, structured inputs (rather than a static lookup) means:
+A hand-written rule table ("if amount < $10 use route A") works until fee curves shift — and they shift hourly. FAssets redemption fees (`redemptionFeeBIPS`), FLR gas price, and XRPL conditions move independently. Framing the decision as an LLM call over live, structured inputs (rather than a static lookup) means:
 
-- New chains/routes can be added by describing them in the prompt/config, not by writing new branching logic.
-- The reasoning ("why this chain was picked") is human-readable and can be logged for the demo/judges without extra instrumentation.
-- The agent naturally handles the "close call" cases — e.g. two routes within 5% of each other — by picking the one with better finality/reliability trade-offs when cost is a tie, instead of needing that judgment hard-coded.
+- The reasoning ("why this timing/batch size was picked") is human-readable and can be logged for the demo/judges without extra instrumentation.
+- The agent naturally handles the "close call" cases — e.g. redeem now in two batches vs. wait and redeem in one full-lot batch — by weighing finality/reliability trade-offs when cost is close, instead of needing that judgment hard-coded.
 
-The LLM is a **cost estimator with judgment**, not a source of truth for prices — all numeric inputs it reasons over come from CoinMarketCap, never from its own knowledge.
+The LLM is a **cost estimator with judgment**, not a source of truth for prices or a source of truth for which routes exist — the fixed route table in §2.1 is config, never generated by the model, and all numeric inputs it reasons over come from CoinMarketCap plus on-chain reads, never from its own knowledge.
 
 ## 3. Runtime: Groq
 
 Inference runs on Groq (LPU-hosted open models — e.g. Llama 3.x / Mixtral class), chosen specifically because this decision sits in the user-facing payment latency path at the ingress/egress edges:
 
-- Groq's low time-to-first-token keeps the "which chain should I use" decision under the same UX budget as the rest of the flow (sub-2-second target, per `plan.md`).
-- The task is a bounded, structured decision (a handful of candidate chains, a handful of numeric features each) — well within a fast, cheaper open-weight model's competence, so there's no need for a slower/heavier model here.
+- Groq's low time-to-first-token keeps the "how should this redemption/bridge be batched" decision under the same UX budget as the rest of the flow (sub-2-second target, per `plan.md`).
+- The task is a bounded, structured decision (at most 2 candidate routes per §2.1, a handful of numeric features each) — well within a fast, cheaper open-weight model's competence, so there's no need for a slower/heavier model here.
 
 Model calls are stateless: one call per ingress/egress decision, no conversation history retained. This keeps the agent easy to reason about and cheap to run per-transaction.
 
@@ -35,18 +47,22 @@ The agent's numeric inputs come from CoinMarketCap (CMC), fetched fresh immediat
 
 | Endpoint | Used for |
 |---|---|
-| `/v2/cryptocurrency/quotes/latest` | Live USD price of the asset being moved, per candidate chain's native/bridged representation |
-| `/v1/tools/price-conversion` | Converting the transfer amount into each chain's gas-fee-denominating asset for an apples-to-apples comparison |
+| `/v2/cryptocurrency/quotes/latest` | Live USD price of XRP / FLR / USDT, for cost comparisons and fiat display alongside FTSOv2 |
+| `/v1/tools/price-conversion` | Converting the transfer amount into FLR (Flare gas) for an apples-to-apples cost comparison |
 
-Where CMC does not expose gas price directly (it is a market-data API, not a gas oracle), the agent combines CMC's price feed with a lightweight per-chain gas-price source (chain RPC `eth_gasPrice` / equivalent, or a gas-station endpoint) to compute:
+CMC is a **secondary, UX/estimation data source** — it never substitutes for FTSOv2, which remains the only price feed the contracts themselves trust for conversion math (`plan.md` §7 threat model: "FTSO price manipulation... reject stale feeds"). CMC data only ever reaches the agent's route recommendation, never the ledger.
+
+Where CMC does not expose gas price or FAssets-specific fees directly (it is a market-data API, not a gas oracle or a FAssets settings endpoint), the agent combines CMC's price feed with:
+- Flare RPC (`eth_gasPrice`) for current gas cost, and
+- a live `getSettings()` read (`redemptionFeeBIPS`, `lotSizeAMG`, `maxRedeemedTickets` — per `implementation.md` §0) for the current FAssets fee terms,
+
+to compute, for each candidate route in §2.1's fixed table:
 
 ```
-total_cost_usd(route) = (gas_units_estimate * gas_price_gwei * native_token_usd_price)
-                       + fixed_bridge_or_relayer_fee_usd(route)
-                       + variable_fee_pct(route) * transfer_amount_usd
+total_cost_usd(route) = (gas_units_estimate * gas_price_gwei * flr_usd_price)
+                       + fassets_redemption_fee_usd(route)     // FXRP egress only
+                       + stargate_fee_usd(route)               // USDT0 mainnet egress only
 ```
-
-CMC supplies the USD pricing legs of that formula; the agent's job is to gather one such estimate per candidate route and pass the set to the LLM for a final ranked recommendation with a short rationale.
 
 ## 5. Decision flow
 
@@ -55,12 +71,12 @@ CMC supplies the USD pricing legs of that formula; the agent's job is to gather 
 │  Trigger: ingress deposit detected, or user requests egress      │
 └───────────────────────────────┬───────────────────────────────────┘
                                  ▼
-                  Enumerate candidate chains/routes
-                  (from the user's primary-chain config +
-                   any protocol-supported egress networks)
+        Enumerate candidate routes for this asset — FIXED table,
+        §2.1 — never more than FXRP's one route or USDT0's two
                                  ▼
         For each candidate: fetch live price (CoinMarketCap)
-        + live gas price (chain RPC) → compute total_cost_usd
+        + live gas price (RPC) + live FAssets fee (getSettings)
+        → compute total_cost_usd
                                  ▼
         Groq LLM call: given [route, cost_usd, est. finality time]
         for each candidate → rank + short rationale
@@ -68,18 +84,20 @@ CMC supplies the USD pricing legs of that formula; the agent's job is to gather 
               Top recommendation surfaced to the user
               (never auto-executed without confirmation)
                                  ▼
-        User confirms → normal Qpay flow executes on-chain,
-        exactly as if the user had picked the route manually
+        User confirms → normal Qpay flow executes on-chain
+        (QpayGateway.redeem / withdrawToXRPL, per implementation.md §5)
                                  ▼
    Fallback: if CMC/Groq call fails or times out → default route
-   for that asset (defined in config), no user-facing delay
+   for that asset (defined in config), no user-facing delay.
+   For FXRP this fallback is trivial — there is only one route.
 ```
 
 ## 6. What the agent is explicitly not
 
-- **Not a signer.** It never holds keys and never submits a transaction itself. Recommendation only — Qpay's existing EIP-712 / on-chain authorization path (see `plan.md` §"dual-authorization") is unchanged.
+- **Not a signer.** It never holds keys and never submits a transaction itself. Recommendation only — Qpay's existing EIP-712 / on-chain authorization path (`plan.md` §5.4) is unchanged.
 - **Not a price oracle for settlement.** FTSOv2 remains the only price feed used for actual conversion math inside the contract. CoinMarketCap data feeds the agent's *route recommendation* only; it never touches balances.
-- **Not required for the system to function.** If Groq or CMC is unreachable, Qpay falls back to a static per-asset default route (the same one used today) and the payment/withdrawal proceeds without the agent in the loop.
+- **Not a general-purpose router.** It cannot introduce a chain or bridge outside the fixed table in §2.1. It specifically cannot route XRP off-Flare through anything other than FAssets redemption — doing so would defeat the entire point of the product per `plan.md` §6.
+- **Not required for the system to function.** If Groq or CMC is unreachable, Qpay falls back to the static default route for that asset and the payment/withdrawal proceeds without the agent in the loop.
 
 ## 7. Failure modes and mitigations
 
@@ -87,11 +105,11 @@ CMC supplies the USD pricing legs of that formula; the agent's job is to gather 
 |---|---|
 | CoinMarketCap API rate-limited or down | Fall back to last-known-good cached quote (short TTL) or static default route |
 | Groq inference timeout | Hard timeout (e.g. 2s) → fall back to lowest-cost candidate computed directly from the numeric data, skipping the LLM ranking step |
-| Agent recommends a route the user's wallet/asset doesn't support | Recommendation list is pre-filtered to routes valid for the user's held asset before the LLM ever sees it |
+| `getSettings()` unreachable (FAssets fee terms) | Fall back to last confirmed on-chain settings read; never guess a fee — an incorrect fee estimate can only ever be a UX inconvenience, never a settlement input |
 | Stale gas price causing a bad recommendation | Gas price fetched fresh per decision, no caching across transactions |
 
 ## 8. Open items
 
-- Which chains/routes are in the candidate set beyond Flare's own ingress/egress list (`plan.md` §"primary chain") is not yet finalized — likely scoped to whatever egress networks Qpay already supports (XRPL, Flare C-chain, Stargate/USDT0 post-hackathon) rather than an open-ended chain list.
 - Exact Groq model choice (Llama 3.1 8B vs. 70B class) should be benchmarked against the latency budget once real CMC + gas-price data is wired up.
 - No historical logging/analytics on agent recommendations vs. actual best route yet — worth adding before relying on this for anything beyond a demo.
+- Whether USDT0's Stargate route is even reachable pre-mainnet is unresolved — `implementation.md` §9 notes no confirmed LayerZero/Stargate testnet deployment on Coston2, so on Coston2 this agent effectively has nothing to decide for USDT0 either; it becomes live only post-hackathon.

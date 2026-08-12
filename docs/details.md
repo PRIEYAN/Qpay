@@ -1,7 +1,9 @@
 # plan.md — Cross-Chain Payment Layer ("UPI for chains")
 
+> **⚠ SUPERSEDED.** This is an earlier, generic-multi-EVM-chain draft (working title "OmniPay") that predates Qpay's current direction. It has no XRP/FXRP/FAssets dependency — the current design in [plan.md](plan.md) and [implementation.md](implementation.md) makes FAssets/FXRP the load-bearing, non-optional core of the product (see `plan.md` §6), which this document does not. Kept for historical reference only; do not build against it. The only parts of this doc still in active use are two threat-model/architecture patterns (non-custodial dual-authorization, "DB is a read replica") which `plan.md` already restates directly in its own §4.2 and §7.
+
 > Working title: **OmniPay** (placeholder — rename before public repo)
-> Status: Design draft v0.1
+> Status: Design draft v0.1 — **superseded**
 > Owner: Abishek Raj
 
 ---

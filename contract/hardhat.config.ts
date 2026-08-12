@@ -34,5 +34,19 @@ export default defineConfig({
       url: configVariable("SEPOLIA_RPC_URL"),
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
     },
+    coston2: {
+      type: "http",
+      chainType: "l1",
+      url: "https://coston2-api.flare.network/ext/C/rpc",
+      chainId: 114,
+      accounts: [configVariable("COSTON2_PRIVATE_KEY")],
+    },
+    flare: {
+      type: "http",
+      chainType: "l1",
+      url: "https://flare-api.flare.network/ext/C/rpc",
+      chainId: 14,
+      accounts: [configVariable("FLARE_PRIVATE_KEY")],
+    },
   },
 });
