@@ -1,0 +1,155 @@
+# ---------------------------------------------------------------------------
+# Secrets / environment
+# ---------------------------------------------------------------------------
+.env
+.env.*
+*.env
+!.env.example
+!.env.sample
+
+# Keys, mnemonics, wallets — never commit
+*.pem
+*.key
+*.keystore
+!debug.keystore
+secrets.json
+mnemonic.txt
+
+# ---------------------------------------------------------------------------
+# Editors / tooling / AI assistants
+# ---------------------------------------------------------------------------
+.cursor/
+.claude/
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+# ---------------------------------------------------------------------------
+# OS cruft
+# ---------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ---------------------------------------------------------------------------
+# Node / JS (contract + mobile)
+# ---------------------------------------------------------------------------
+node_modules/
+.pnpm-store/
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+logs/
+*.log
+
+# Build output
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Caches
+.cache/
+.eslintcache
+.parcel-cache/
+.turbo/
+.npm/
+
+# ---------------------------------------------------------------------------
+# Solidity / Hardhat (contract/)
+# ---------------------------------------------------------------------------
+artifacts/
+cache/
+typechain/
+typechain-types/
+contract/types/
+contract/bundle/
+
+# Foundry
+forge-cache/
+broadcast/
+.gas-snapshot
+snapshots/
+
+# Hardhat Ignition — keep deployed addresses/journals, drop local chain runs
+ignition/deployments/chain-31337/
+
+# Coverage
+coverage/
+coverage.json
+lcov.info
+.nyc_output/
+
+# ---------------------------------------------------------------------------
+# React Native (mobile/)
+# ---------------------------------------------------------------------------
+# Metro
+.metro-health-check*
+.expo/
+*.jsbundle
+
+# Android
+.gradle/
+local.properties
+*.hprof
+.cxx/
+.kotlin/
+*.apk
+*.aab
+
+# iOS
+Pods/
+*.xcworkspace/xcuserdata/
+xcuserdata/
+*.xcuserstate
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+**/.xcode.env.local
+*.moved-aside
+*.xccheckout
+
+# Ruby / CocoaPods
+vendor/bundle/
+
+# Fastlane
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+
+# ---------------------------------------------------------------------------
+# Testing / misc
+# ---------------------------------------------------------------------------
+.jest-cache/
+*.pid
+*.seed
+*.pid.lock
+tmp/
+temp/
