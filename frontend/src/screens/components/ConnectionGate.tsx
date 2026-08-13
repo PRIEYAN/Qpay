@@ -175,10 +175,12 @@ function WrongNetworkBanner() {
       <div
         className="stack stack--xs"
         style={{
-          border: 'var(--border-width) solid var(--ink)',
+          border: 'var(--border-width) solid var(--glass-border)',
           borderRadius: 'var(--radius-md)',
           padding: 'var(--space-md)',
-          background: 'var(--surface)',
+          background: 'var(--glass-fill)',
+          backdropFilter: 'blur(var(--glass-blur))',
+          WebkitBackdropFilter: 'blur(var(--glass-blur))',
           marginBottom: 'var(--space-md)',
         }}
       >

@@ -9,22 +9,23 @@
    =========================================================================== */
 
 .onboarding {
-  --ob-ground: #0d2f2b;
-  --ob-ink: #b9d9ea;
-  --ob-cta: #ffffff;
-  --ob-cta-ink: #0d2f2b;
-  --ob-accent-a: #f26f21;
-  --ob-accent-b: #8a2f10;
+  /* Pure black ground, pure white type, violet as the only hue — the app's
+     palette at brand scale. This page owns it in both themes: it is a brand
+     surface, not app chrome, so it must not invert under the light tokens. */
+  --ob-ground: #000000;
+  --ob-ink: #ffffff;
+  --ob-cta-ink: #000000;
+  --ob-accent-a: #7c5cff;
+  --ob-accent-b: #5b3ee0;
 
   position: fixed;
   inset: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  background: var(--ob-ground);
   color: var(--ob-ink);
-  /* This page owns its palette in both themes — it is a brand surface, not
-     app chrome, so it must not invert under the dark-mode tokens. */
   color-scheme: dark;
+
+  background-color: var(--ob-ground);
 }
 
 .onboarding__inner {
@@ -44,7 +45,10 @@
   justify-content: space-between;
   gap: var(--space-md);
   padding: clamp(16px, 3vw, 28px) clamp(16px, 4vw, 48px);
-  background: linear-gradient(to bottom, var(--ob-ground) 60%, transparent);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .ob-wordmark {
@@ -73,13 +77,15 @@
   height: 52px;
   padding: 0 28px;
   border-radius: var(--radius-pill);
-  background: #05100f;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   color: #fff;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  border: none;
   cursor: pointer;
   transition:
     transform var(--duration-fast) var(--ease-spring),
@@ -88,7 +94,8 @@
 }
 
 .ob-pill:hover:not(:disabled) {
-  background: #000;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(124, 92, 255, 0.55);
 }
 .ob-pill:active:not(:disabled) {
   transform: scale(0.97);
@@ -99,11 +106,15 @@
 }
 
 .ob-pill--light {
-  background: #fff;
+  background: #ffffff;
+  border-color: #ffffff;
   color: var(--ob-cta-ink);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 .ob-pill--light:hover:not(:disabled) {
-  background: #eef6f4;
+  background: #f0f0f0;
+  transform: translateY(-1px);
 }
 
 .ob-pill--icon {
@@ -132,10 +143,10 @@
   font-weight: 900;
   letter-spacing: -0.03em;
   text-transform: uppercase;
-  color: var(--ob-ink);
   margin: 0 auto;
   max-width: 14ch;
   text-wrap: balance;
+  color: var(--ob-ink);
 }
 
 .ob-hero__title em {
@@ -147,7 +158,7 @@
   margin-top: clamp(20px, 3vw, 34px);
   font-size: clamp(15px, 1.5vw, 19px);
   line-height: 1.5;
-  color: rgba(185, 217, 234, 0.78);
+  color: rgba(255, 255, 255, 0.72);
   max-width: 46ch;
 }
 
@@ -168,10 +179,10 @@
 .ob-hero__note {
   margin-top: 18px;
   font-size: 13px;
-  color: rgba(185, 217, 234, 0.6);
+  color: rgba(255, 255, 255, 0.5);
 }
 
-/* ---- the orange facets at the base of the hero -------------------------- */
+/* ---- the quiet violet markers at the base of the hero ------------------- */
 
 .ob-facets {
   position: relative;
@@ -185,9 +196,8 @@
 .ob-facet {
   position: absolute;
   bottom: -2px;
-  width: 0;
-  height: 0;
   border-style: solid;
+  opacity: 0.5;
   animation: ob-rise var(--duration-slower) var(--ease-decelerate) both;
 }
 
@@ -230,10 +240,15 @@
   }
 }
 
-/* ---- second panel: the phone mockup on a light field -------------------- */
+/* ---- second panel: the phone mockup, floating on the same black field --- */
 
 .ob-showcase {
-  background: #d9edb0;
+  /* No solid fill — the page's violet-over-black ground continues through,
+     with a frosted plate separating this section from the hero. */
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: clamp(40px, 8vw, 96px) clamp(16px, 4vw, 48px);
   display: flex;
   flex-direction: column;
@@ -244,7 +259,7 @@
 
 .ob-showcase__heading {
   text-align: center;
-  color: #10231a;
+  color: #ffffff;
   max-width: 34ch;
 }
 
@@ -259,7 +274,7 @@
   margin-top: 14px;
   font-size: clamp(14px, 1.4vw, 17px);
   line-height: 1.55;
-  color: rgba(16, 35, 26, 0.72);
+  color: rgba(255, 255, 255, 0.66);
 }
 
 /* The device. A real bordered frame rather than an image, so the preview
@@ -269,9 +284,10 @@
   border-radius: 34px;
   background: #000;
   padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
-    0 30px 60px rgba(10, 40, 30, 0.28),
-    0 2px 0 rgba(255, 255, 255, 0.06) inset;
+    0 20px 50px rgba(0, 0, 0, 0.6),
+    0 2px 0 rgba(255, 255, 255, 0.08) inset;
   position: relative;
   animation: qp-slide-up var(--duration-slower) var(--ease-decelerate) both;
 }
@@ -304,7 +320,7 @@
 }
 
 .ob-phone__delta {
-  color: #4ade80;
+  color: #34d399;
   font-size: 13px;
   font-weight: 600;
   margin-top: 6px;
@@ -317,7 +333,8 @@
 }
 
 .ob-phone__action {
-  background: #1a1a1a;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
   padding: 12px 4px;
   display: flex;
@@ -330,7 +347,8 @@
 }
 
 .ob-phone__card {
-  background: #1a1a1a;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 14px 16px;
   display: flex;
@@ -373,18 +391,30 @@
 }
 
 .ob-prop {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-lg);
   padding: clamp(20px, 2.4vw, 28px);
-  color: #10231a;
+  color: #ffffff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  transition:
+    transform var(--duration-base) var(--ease-spring),
+    border-color var(--duration-base) var(--ease-standard);
+}
+
+.ob-prop:hover {
+  transform: translateY(-4px);
+  border-color: rgba(124, 92, 255, 0.5);
 }
 
 .ob-prop__icon {
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: #10231a;
-  color: #d9edb0;
+  background: var(--ob-accent-a);
+  color: #ffffff;
   display: grid;
   place-items: center;
   margin-bottom: 14px;
@@ -399,7 +429,7 @@
 .ob-prop p {
   font-size: 14px;
   line-height: 1.5;
-  color: rgba(16, 35, 26, 0.7);
+  color: rgba(255, 255, 255, 0.62);
 }
 
 /* ---- footer ------------------------------------------------------------- */
@@ -412,8 +442,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  color: rgba(185, 217, 234, 0.6);
+  color: rgba(255, 255, 255, 0.45);
   font-size: 13px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* ---- the update toast, bottom-left in the reference --------------------- */
@@ -427,15 +458,19 @@
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  border-radius: 12px;
-  background: #fff;
-  color: #10231a;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
   max-width: min(420px, calc(100vw - 24px));
   animation: qp-slide-up var(--duration-slow) var(--ease-decelerate) 600ms both;
 }
 
 .ob-update__tag {
+  color: var(--ob-accent-a);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -445,7 +480,7 @@
 
 .ob-update__text {
   font-size: 13px;
-  color: rgba(16, 35, 26, 0.78);
+  color: rgba(255, 255, 255, 0.72);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -453,7 +488,7 @@
 
 .ob-update__close {
   flex-shrink: 0;
-  color: rgba(16, 35, 26, 0.5);
+  color: rgba(255, 255, 255, 0.5);
   display: grid;
   place-items: center;
 }
@@ -474,8 +509,10 @@
   width: 100%;
   padding: 14px 16px;
   border-radius: var(--radius-md);
-  border: var(--border-width) solid var(--border);
-  background: var(--paper);
+  border: var(--border-width) solid var(--glass-border);
+  background: var(--glass-fill);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   color: var(--ink);
   cursor: pointer;
   text-align: left;
@@ -485,7 +522,8 @@
 }
 
 .ob-wallet:hover {
-  border-color: var(--ink);
+  border-color: var(--violet);
+  background: var(--glass-fill-strong);
 }
 .ob-wallet:active {
   transform: scale(0.99);
@@ -496,7 +534,7 @@
   height: 36px;
   border-radius: 8px;
   object-fit: contain;
-  background: var(--surface);
+  background: var(--glass-fill-sunken);
   display: grid;
   place-items: center;
   flex-shrink: 0;

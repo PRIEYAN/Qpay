@@ -56,9 +56,49 @@ signing needs the switch.
 
 Light and dark are two sets of CSS custom properties in `theme/tokens.css`,
 switched by a `data-theme` attribute on `<html>`. It follows the OS by
-default and persists an explicit choice from Settings. The landing page
-deliberately opts out and owns its own colour field — it's a brand surface,
-not app chrome.
+default and persists an explicit choice from Settings.
+
+**The palette is three things and nothing else:**
+
+- **Pure black `#000000`** and **pure white `#FFFFFF`** are literal poles —
+  `--ink` / `--paper` swap between them per theme. Nothing in between
+  pretends to be either.
+- **Violet** (`--violet: #7c5cff`) is the single accent, used sparingly:
+  focus rings, hover borders, hover tints, and the active tab. It never
+  carries money direction — that stays `--success` / `--danger` — and never
+  becomes a second neutral or a glow.
+- Everything else is neutral.
+
+**Glassmorphism** is the surface language. Elevated surfaces are frosted,
+not filled: a translucent ground, a backdrop blur, a hairline top highlight,
+and a soft shadow. The `--glass-*` tokens are the whole vocabulary, in three
+weights — `--sunken` for input wells, the default for cards and rows,
+`--strong` for sheets, the footer and the nav bars. Components compose them
+(or the `.glass` class in `global.css`) rather than each inventing its own
+rgba value, so every pane shares one focal depth.
+
+Depth comes from the panes themselves — translucency, blur, a hairline lit
+rim, and a small neutral shadow. There is deliberately **no coloured haze
+behind the UI and no violet glow on any element**: shadows are neutral
+black at low alpha, and the accent appears only as borders, focus rings,
+hover tints and the active tab.
+
+Glass fills are defined *per theme*, not once: a white wash over black reads
+nothing like a white wash over white, so dark mode runs much lower alpha
+(~5%) than light (~62%).
+
+Three deliberate exceptions stay opaque:
+
+- **Selected cards** invert to solid ink. A chosen option must be
+  unmistakable, and glass-on-glass never is.
+- **The QR code** is hardcoded black-on-white. It has to scan.
+- **Browsers without `backdrop-filter`** get opaque surfaces via
+  `@supports not` — translucent fills over a busy ground are unreadable
+  without the blur.
+
+The landing page opts out of the app shell and owns its own field — flat
+black ground, white display type, frosted panes — because it's a brand
+surface, not app chrome.
 
 ## Notes on behaviour that differs from mobile
 

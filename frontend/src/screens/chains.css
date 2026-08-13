@@ -10,7 +10,7 @@
   display: grid;
   place-items: center;
   border-radius: var(--radius-sm);
-  border: var(--border-width) solid var(--border);
+  border: var(--border-width) solid var(--glass-border);
   flex-shrink: 0;
 }
 
@@ -59,7 +59,7 @@
   height: 6px;
   border-radius: var(--radius-pill);
   background: var(--surface-sunken);
-  border: var(--border-width) solid var(--border);
+  border: var(--border-width) solid var(--glass-border);
   overflow: hidden;
 }
 

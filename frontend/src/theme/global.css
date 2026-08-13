@@ -29,17 +29,9 @@ body {
   text-rendering: optimizeLegibility;
   overscroll-behavior-y: none;
 
-  /* The ground every frosted pane floats over. Two fixed violet blooms give
-     the blur something to refract — glass over a flat fill just reads grey.
-     `fixed` so the field stays put while content scrolls past it, which is
-     what makes the panes feel like they are moving over something. */
+  /* A plain neutral ground. Depth comes from the panes themselves —
+     translucency, blur and a lit rim — not from colour behind them. */
   background-color: var(--ground);
-  background-image:
-    radial-gradient(60vw 60vw at 12% -10%, var(--bloom-a), transparent 60%),
-    radial-gradient(50vw 50vw at 96% 8%, var(--bloom-b), transparent 62%),
-    radial-gradient(46vw 46vw at 50% 108%, var(--bloom-a), transparent 64%);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
 }
 
 button,
@@ -189,6 +181,76 @@ canvas {
 }
 
 /* ---------------------------------------------------------------------------
+   Glass — the one frosted-surface primitive.
+
+   Every elevated surface in the app composes this rather than hand-rolling
+   its own rgba + blur, so panes share a focal depth and read as one
+   material. Three weights: `--sunken` for wells and inputs, the default for
+   cards and rows, `--strong` for sheets and anything that must stay legible
+   over arbitrary content.
+
+   `isolation: isolate` matters: `backdrop-filter` samples the nearest
+   stacking context, so without it nested panes sample each other and the
+   blur compounds into mud.
+   --------------------------------------------------------------------------- */
+
+.glass {
+  position: relative;
+  background: var(--glass-fill);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: var(--border-width) solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  isolation: isolate;
+}
+
+.glass--strong {
+  background: var(--glass-fill-strong);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(180%);
+  box-shadow: var(--glass-shadow-lg);
+}
+
+.glass--sunken {
+  background: var(--glass-fill-sunken);
+  box-shadow: none;
+}
+
+/* The lit top edge. A 1px inset gradient reads as light catching the rim of
+   a physical pane; a plain lighter border just reads as a lighter border. */
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding-top: var(--border-width);
+  background: linear-gradient(to bottom, var(--glass-highlight), transparent 42%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/*
+ * Fallback for browsers without backdrop-filter (mainly older Firefox with
+ * the pref off). Translucent fills over a busy ground are unreadable
+ * without the blur, so those browsers get an opaque surface instead — less
+ * pretty, still legible, which is the right trade.
+ */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: var(--surface);
+  }
+  .glass--strong {
+    background: var(--surface-raised);
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Motion primitives
    --------------------------------------------------------------------------- */
 
@@ -298,15 +360,22 @@ canvas {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--paper);
   max-width: var(--app-max-width);
   margin: 0 auto;
   position: relative;
+  /* Deliberately no background: the body's violet field shows through, and
+     the glass panes inside blur *it*. Painting `--paper` here would put an
+     opaque sheet between the two and there'd be nothing left to refract. */
 }
 
+/* On desktop the column reads as a device against the field — a frosted
+   edge rather than a hairline rule. */
 @media (min-width: 520px) {
   .app-shell {
-    border-inline: var(--border-width) solid var(--border);
+    border-inline: var(--border-width) solid var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    background: var(--glass-fill-sunken);
   }
 }
 

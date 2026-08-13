@@ -570,13 +570,18 @@ export function SegmentedControl<T extends string>({
     0,
     options.findIndex((o) => o.value === value),
   );
-  const width = options.length > 0 ? 100 / options.length : 100;
+  const count = options.length || 1;
+
+  // The track carries 3px of padding, so the pill's width is a share of the
+  // *inset* box, not of the element — hence the calc rather than a plain
+  // percentage. It then travels one full pill-width per step.
+  const width = `calc((100% - 6px) / ${count})`;
 
   return (
     <div className="segmented" role="tablist">
       <div
         className="segmented__indicator"
-        style={{ width: `${width}%`, transform: `translateX(${index * 100}%)` }}
+        style={{ width, transform: `translateX(${index * 100}%)` }}
       />
       {options.map((option) => (
         <button

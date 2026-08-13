@@ -35,6 +35,6 @@ a.row:active .c-muted {
 
 @media (hover: hover) {
   a.row:hover {
-    background: var(--surface);
+    background: var(--accent-muted);
   }
 }

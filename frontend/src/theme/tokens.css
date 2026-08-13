@@ -102,12 +102,10 @@
   --success: #15803d;
   --danger: #dc2626;
 
-  /* The page ground the glass floats over. Violet blooms give the blur
-     something to actually refract — frosted panes over a flat fill just
-     look grey. */
-  --ground: #ffffff;
-  --bloom-a: rgba(124, 92, 255, 0.16);
-  --bloom-b: rgba(157, 127, 255, 0.12);
+  /* The page ground the glass floats over — a plain neutral field. The
+     depth comes from the panes themselves (translucency, blur, a lit rim),
+     not from colour behind them. */
+  --ground: #f2f1f6;
 
   /* ---- glass ---- */
   --glass-fill: rgba(255, 255, 255, 0.62);
@@ -116,15 +114,17 @@
   --glass-border: rgba(16, 12, 32, 0.09);
   /* The lit top edge that sells a pane as a physical surface. */
   --glass-highlight: rgba(255, 255, 255, 0.9);
-  --glass-shadow: 0 8px 32px rgba(23, 15, 61, 0.1);
-  --glass-shadow-lg: 0 20px 56px rgba(23, 15, 61, 0.16);
+  /* Neutral, restrained. A shadow is depth, not decoration — it never
+     carries the accent hue. */
+  --glass-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  --glass-shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.1);
 
-  --accent-muted: rgba(124, 92, 255, 0.14);
-  --accent-ring: rgba(124, 92, 255, 0.28);
+  --accent-muted: rgba(124, 92, 255, 0.1);
+  --accent-ring: rgba(124, 92, 255, 0.22);
 
-  --elevation-sm: 0 1px 3px rgba(23, 15, 61, 0.07);
-  --elevation-md: 0 6px 18px rgba(23, 15, 61, 0.11);
-  --elevation-lg: 0 18px 44px rgba(23, 15, 61, 0.16);
+  --elevation-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --elevation-md: 0 4px 14px rgba(0, 0, 0, 0.09);
+  --elevation-lg: 0 12px 32px rgba(0, 0, 0, 0.13);
 }
 
 /* ===========================================================================
@@ -148,8 +148,6 @@
   --danger: #ff5c5c;
 
   --ground: #000000;
-  --bloom-a: rgba(124, 92, 255, 0.26);
-  --bloom-b: rgba(91, 62, 224, 0.18);
 
   /* ---- glass ----
      Lower alpha than light: on black, a white wash gains apparent
@@ -160,11 +158,11 @@
   --glass-fill-sunken: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-highlight: rgba(255, 255, 255, 0.22);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
-  --glass-shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.7);
+  --glass-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+  --glass-shadow-lg: 0 10px 34px rgba(0, 0, 0, 0.6);
 
-  --accent-muted: rgba(124, 92, 255, 0.2);
-  --accent-ring: rgba(124, 92, 255, 0.4);
+  --accent-muted: rgba(124, 92, 255, 0.16);
+  --accent-ring: rgba(124, 92, 255, 0.34);
 
   --elevation-sm: none;
   --elevation-md: none;
