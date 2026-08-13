@@ -1,0 +1,40 @@
+.tx__badge {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  border: var(--border-width-strong) solid currentColor;
+}
+
+.tx__counterparty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  padding-bottom: var(--space-md);
+}
+
+/* The explorer link is an <a> styled as a row — it must match the buttons
+   above it exactly, including the press inversion. */
+a.row {
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+a.row:active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+a.row:active .c-muted {
+  color: var(--paper);
+}
+
+@media (hover: hover) {
+  a.row:hover {
+    background: var(--surface);
+  }
+}

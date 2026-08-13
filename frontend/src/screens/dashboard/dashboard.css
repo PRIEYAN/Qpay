@@ -1,0 +1,65 @@
+.dash__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.dash__topbar .cluster {
+  gap: var(--space-md);
+  color: var(--ink);
+}
+
+.dash__search {
+  margin-bottom: var(--space-lg);
+}
+
+.dash__balance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: var(--space-xl);
+  margin-bottom: var(--space-lg);
+}
+
+.dash__chains-link {
+  margin-top: var(--space-md);
+  gap: var(--space-xs);
+}
+
+.dash__actions {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.dash__section {
+  margin-bottom: var(--space-xl);
+}
+
+.dash__new-avatar {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--ink);
+  color: var(--ink);
+}
+
+.dash__list {
+  padding-inline: var(--space-md);
+}
+
+/* At the narrowest phone widths five tiles get cramped — drop the labels to
+   the smallest legible size rather than wrapping or truncating them. */
+@media (max-width: 380px) {
+  .dash__actions {
+    gap: var(--space-xs);
+  }
+  .action-tile__label {
+    font-size: 10px;
+  }
+}

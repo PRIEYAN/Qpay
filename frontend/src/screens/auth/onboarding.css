@@ -1,0 +1,511 @@
+/* ===========================================================================
+   Onboarding — the one deliberately full-bleed, marketing-shaped surface in
+   the app, modelled on the MetaMask landing reference.
+
+   It breaks the phone-column shell on purpose: this is the page a first-time
+   user lands on before there is any app state to show, so it gets the whole
+   viewport, an oversized display wordmark, and its own committed colour
+   field rather than the ink/paper system the app proper runs on.
+   =========================================================================== */
+
+.onboarding {
+  --ob-ground: #0d2f2b;
+  --ob-ink: #b9d9ea;
+  --ob-cta: #ffffff;
+  --ob-cta-ink: #0d2f2b;
+  --ob-accent-a: #f26f21;
+  --ob-accent-b: #8a2f10;
+
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--ob-ground);
+  color: var(--ob-ink);
+  /* This page owns its palette in both themes — it is a brand surface, not
+     app chrome, so it must not invert under the dark-mode tokens. */
+  color-scheme: dark;
+}
+
+.onboarding__inner {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- top bar ------------------------------------------------------------ */
+
+.ob-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: clamp(16px, 3vw, 28px) clamp(16px, 4vw, 48px);
+  background: linear-gradient(to bottom, var(--ob-ground) 60%, transparent);
+}
+
+.ob-wordmark {
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.ob-wordmark span {
+  display: block;
+}
+
+.ob-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ob-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 28px;
+  border-radius: var(--radius-pill);
+  background: #05100f;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition:
+    transform var(--duration-fast) var(--ease-spring),
+    background-color var(--duration-fast) var(--ease-standard);
+  white-space: nowrap;
+}
+
+.ob-pill:hover:not(:disabled) {
+  background: #000;
+}
+.ob-pill:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.ob-pill:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.ob-pill--light {
+  background: #fff;
+  color: var(--ob-cta-ink);
+}
+.ob-pill--light:hover:not(:disabled) {
+  background: #eef6f4;
+}
+
+.ob-pill--icon {
+  width: 52px;
+  padding: 0;
+}
+
+/* ---- hero --------------------------------------------------------------- */
+
+.ob-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(24px, 5vw, 64px) clamp(16px, 4vw, 48px) 0;
+  position: relative;
+}
+
+/* The oversized display wordmark. `clamp` on vw keeps the three lines
+   filling the width at every size without a media-query ladder. */
+.ob-hero__title {
+  font-size: clamp(44px, 13.5vw, 190px);
+  line-height: 0.82;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--ob-ink);
+  margin: 0 auto;
+  max-width: 14ch;
+  text-wrap: balance;
+}
+
+.ob-hero__title em {
+  font-style: normal;
+  display: block;
+}
+
+.ob-hero__sub {
+  margin-top: clamp(20px, 3vw, 34px);
+  font-size: clamp(15px, 1.5vw, 19px);
+  line-height: 1.5;
+  color: rgba(185, 217, 234, 0.78);
+  max-width: 46ch;
+}
+
+.ob-hero__cta {
+  margin-top: clamp(28px, 4vw, 44px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.ob-hero__cta .ob-pill {
+  height: 56px;
+  padding: 0 36px;
+  font-size: 15px;
+}
+
+.ob-hero__note {
+  margin-top: 18px;
+  font-size: 13px;
+  color: rgba(185, 217, 234, 0.6);
+}
+
+/* ---- the orange facets at the base of the hero -------------------------- */
+
+.ob-facets {
+  position: relative;
+  width: 100%;
+  height: clamp(120px, 22vh, 260px);
+  margin-top: clamp(24px, 4vw, 48px);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ob-facet {
+  position: absolute;
+  bottom: -2px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  animation: ob-rise var(--duration-slower) var(--ease-decelerate) both;
+}
+
+.ob-facet--left {
+  left: 18%;
+  border-width: 0 90px 190px 90px;
+  border-color: transparent transparent var(--ob-accent-a) transparent;
+  animation-delay: 120ms;
+}
+
+.ob-facet--left-dark {
+  left: 12%;
+  border-width: 0 70px 150px 70px;
+  border-color: transparent transparent var(--ob-accent-b) transparent;
+  animation-delay: 60ms;
+}
+
+.ob-facet--right {
+  right: 16%;
+  border-width: 0 100px 210px 100px;
+  border-color: transparent transparent var(--ob-accent-a) transparent;
+  animation-delay: 180ms;
+}
+
+.ob-facet--right-dark {
+  right: 10%;
+  border-width: 0 74px 160px 74px;
+  border-color: transparent transparent var(--ob-accent-b) transparent;
+  animation-delay: 100ms;
+}
+
+@keyframes ob-rise {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- second panel: the phone mockup on a light field -------------------- */
+
+.ob-showcase {
+  background: #d9edb0;
+  padding: clamp(40px, 8vw, 96px) clamp(16px, 4vw, 48px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(28px, 4vw, 48px);
+  position: relative;
+}
+
+.ob-showcase__heading {
+  text-align: center;
+  color: #10231a;
+  max-width: 34ch;
+}
+
+.ob-showcase__heading h2 {
+  font-size: clamp(26px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.ob-showcase__heading p {
+  margin-top: 14px;
+  font-size: clamp(14px, 1.4vw, 17px);
+  line-height: 1.55;
+  color: rgba(16, 35, 26, 0.72);
+}
+
+/* The device. A real bordered frame rather than an image, so the preview
+   inside it can be live markup that matches the actual app. */
+.ob-phone {
+  width: min(340px, 86vw);
+  border-radius: 34px;
+  background: #000;
+  padding: 12px;
+  box-shadow:
+    0 30px 60px rgba(10, 40, 30, 0.28),
+    0 2px 0 rgba(255, 255, 255, 0.06) inset;
+  position: relative;
+  animation: qp-slide-up var(--duration-slower) var(--ease-decelerate) both;
+}
+
+.ob-phone__screen {
+  border-radius: 24px;
+  background: #0a0a0a;
+  padding: 20px 18px 24px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow: hidden;
+}
+
+.ob-phone__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ob-phone__balance {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -1.4px;
+  line-height: 1;
+}
+
+.ob-phone__delta {
+  color: #4ade80;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.ob-phone__actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.ob-phone__action {
+  background: #1a1a1a;
+  border-radius: 14px;
+  padding: 12px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ob-phone__card {
+  background: #1a1a1a;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ob-phone__list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ob-phone__token {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ob-phone__token-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* ---- value props -------------------------------------------------------- */
+
+.ob-props {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: clamp(16px, 2vw, 24px);
+  width: min(1080px, 100%);
+}
+
+.ob-prop {
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: var(--radius-lg);
+  padding: clamp(20px, 2.4vw, 28px);
+  color: #10231a;
+}
+
+.ob-prop__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #10231a;
+  color: #d9edb0;
+  display: grid;
+  place-items: center;
+  margin-bottom: 14px;
+}
+
+.ob-prop h3 {
+  font-size: 17px;
+  font-weight: 750;
+  margin-bottom: 6px;
+}
+
+.ob-prop p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(16, 35, 26, 0.7);
+}
+
+/* ---- footer ------------------------------------------------------------- */
+
+.ob-footer {
+  background: var(--ob-ground);
+  padding: clamp(28px, 4vw, 48px) clamp(16px, 4vw, 48px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: rgba(185, 217, 234, 0.6);
+  font-size: 13px;
+}
+
+/* ---- the update toast, bottom-left in the reference --------------------- */
+
+.ob-update {
+  position: fixed;
+  left: clamp(12px, 2vw, 28px);
+  bottom: clamp(12px, 2vw, 28px);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff;
+  color: #10231a;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  max-width: min(420px, calc(100vw - 24px));
+  animation: qp-slide-up var(--duration-slow) var(--ease-decelerate) 600ms both;
+}
+
+.ob-update__tag {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.ob-update__text {
+  font-size: 13px;
+  color: rgba(16, 35, 26, 0.78);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ob-update__close {
+  flex-shrink: 0;
+  color: rgba(16, 35, 26, 0.5);
+  display: grid;
+  place-items: center;
+}
+
+/* ---- wallet picker sheet ------------------------------------------------ */
+
+.ob-wallets {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.ob-wallet {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-spring);
+}
+
+.ob-wallet:hover {
+  border-color: var(--ink);
+}
+.ob-wallet:active {
+  transform: scale(0.99);
+}
+
+.ob-wallet__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .ob-nav__actions .ob-pill:not(.ob-pill--icon) {
+    height: 46px;
+    padding: 0 20px;
+    font-size: 13px;
+  }
+}

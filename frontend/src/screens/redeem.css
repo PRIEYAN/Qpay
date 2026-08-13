@@ -1,0 +1,24 @@
+.redeem__ring-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.redeem__ring {
+  flex-shrink: 0;
+}
+
+/* Shared success badge, used by Send / Deposit / Request confirmations. */
+.send__success-badge {
+  width: 88px;
+  height: 88px;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius-md);
+}
+
+.send__note {
+  margin-bottom: var(--space-lg);
+}

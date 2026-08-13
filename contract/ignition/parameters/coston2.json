@@ -2,6 +2,8 @@
   "QpayModule": {
     "fxrp": "0x0b6A3645c240605887a5532109323A3E12273dc7",
     "ftso": "0xC4e9c78EA53db782E28f28Fdf80BaF59336B304d",
-    "assetManager": "0xc1Ca88b937d0b528842F95d5731ffB586f4fbDFA"
+    "assetManager": "0xc1Ca88b937d0b528842F95d5731ffB586f4fbDFA",
+    "fxrpFeedId": "0x015852502f55534400000000000000000000000000",
+    "fxrpDecimals": 6
   }
 }

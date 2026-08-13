@@ -1,0 +1,12 @@
+.profile__header {
+  padding-bottom: var(--space-lg);
+}
+
+.profile__id {
+  margin-top: var(--space-xs);
+  gap: var(--space-xs);
+}
+
+.profile__address {
+  margin-top: var(--space-sm);
+}

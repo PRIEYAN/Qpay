@@ -1,0 +1,71 @@
+.chains__zone {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.chains__zone-icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid var(--border);
+  flex-shrink: 0;
+}
+
+.chains__card {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.chains__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.chains__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.chains__actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+/* The two buttons sit side by side rather than stretching full width. */
+.chains__actions .btn {
+  width: auto;
+  min-height: 40px;
+  padding: 0 var(--space-md);
+  font-size: 13px;
+}
+
+.chains__lots {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.chains__bar {
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  border: var(--border-width) solid var(--border);
+  overflow: hidden;
+}
+
+.chains__bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width var(--duration-slow) var(--ease-standard);
+}

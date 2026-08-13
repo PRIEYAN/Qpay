@@ -1,0 +1,773 @@
+/* ===========================================================================
+   Qpay UI primitives — the web port of `src/component/ui/*`.
+
+   The rules the mobile system was built on carry over unchanged:
+     · ink/paper are the two poles; press states INVERT rather than tint
+     · one accent, used only for focus/selection/interactive affordance
+     · success/danger carry money direction and errors, nothing else
+     · radius comes from the four-step scale, never a literal
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Screen — the app-bar + scroll body + pinned footer frame.
+   --------------------------------------------------------------------------- */
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  background: var(--paper);
+}
+
+.screen__appbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: var(--border-width) solid var(--border);
+  background: var(--paper);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding-top: max(var(--space-md), env(safe-area-inset-top));
+}
+
+.screen__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.screen__body--padded {
+  padding: var(--space-lg);
+  padding-bottom: var(--space-xxl);
+}
+
+.screen__footer {
+  padding: var(--space-md) var(--space-lg);
+  padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
+  border-top: var(--border-width) solid var(--border);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* ---------------------------------------------------------------------------
+   Button — press inverts the fill; there is no accent to darken toward.
+   --------------------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  min-height: 52px;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-spring),
+    opacity var(--duration-fast) var(--ease-standard);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn--lg {
+  min-height: 60px;
+  padding: var(--space-lg);
+}
+
+.btn--primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn--secondary {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: transparent;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* The inversion: primary empties, secondary/ghost fill. */
+.btn--primary:active:not(:disabled) {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.btn--secondary:active:not(:disabled),
+.btn--ghost:active:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+@media (hover: hover) {
+  .btn--secondary:hover:not(:disabled),
+  .btn--ghost:hover:not(:disabled) {
+    background: var(--surface);
+  }
+  .btn--primary:hover:not(:disabled) {
+    opacity: 0.88;
+  }
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.btn--accent {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn--accent:active:not(:disabled) {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  color: #fff;
+}
+
+/* ---------------------------------------------------------------------------
+   Card — depth from contrast; `raised` climbs the surface ramp on dark and
+   takes a real shadow on light.
+   --------------------------------------------------------------------------- */
+
+.card {
+  border-radius: var(--radius-md);
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+.card--padded {
+  padding: var(--space-md);
+}
+
+.card--outlined {
+  background: var(--paper);
+  border: var(--border-width) solid var(--ink);
+}
+
+.card--flat {
+  background: var(--surface);
+  border: none;
+}
+
+.card--flat.card--raised {
+  background: var(--surface-raised);
+  box-shadow: var(--elevation-sm);
+}
+
+.card--selected {
+  background: var(--ink);
+  color: var(--paper);
+  border-width: var(--border-width-strong);
+}
+
+.card--selected .c-muted {
+  color: var(--paper);
+  opacity: 0.7;
+}
+
+button.card {
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-spring);
+}
+
+button.card:active:not(:disabled) {
+  transform: scale(0.98);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+button.card:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+/* ---------------------------------------------------------------------------
+   Input / SearchBar — focus is signalled by border weight AND accent colour.
+   --------------------------------------------------------------------------- */
+
+.field__label {
+  display: block;
+  margin-bottom: var(--space-sm);
+  color: var(--muted);
+}
+
+.field__box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--border);
+  background: var(--paper);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.field__box:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.field__input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-md) 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.field__input::placeholder {
+  color: var(--muted);
+}
+
+.field__input--amount {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -1.2px;
+}
+
+/* Number inputs shouldn't carry spinners in a payments UI. */
+.field__input[type='number']::-webkit-outer-spin-button,
+.field__input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.field__input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.searchbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-pill);
+  border: var(--border-width) solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background-color var(--duration-fast) var(--ease-standard);
+  width: 100%;
+  cursor: text;
+}
+
+.searchbar:focus-within {
+  border-color: var(--accent);
+  background: var(--paper);
+}
+
+.searchbar__input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.searchbar__input::placeholder {
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Avatar — square-cornered, never circular.
+   --------------------------------------------------------------------------- */
+
+.avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid var(--ink);
+  overflow: hidden;
+  flex-shrink: 0;
+  font-weight: 600;
+  user-select: none;
+}
+
+.avatar__initial {
+  position: relative;
+  z-index: 1;
+  line-height: 1;
+}
+
+/* ---------------------------------------------------------------------------
+   Rows — ListRow / Row / IconRow all share the ink-inversion press state.
+   --------------------------------------------------------------------------- */
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-sm);
+  border-radius: var(--radius-sm);
+  width: 100%;
+  text-align: left;
+  color: var(--ink);
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-spring);
+}
+
+button.row {
+  cursor: pointer;
+}
+
+button.row:active {
+  background: var(--ink);
+  color: var(--paper);
+  transform: scale(0.99);
+}
+
+button.row:active .c-muted,
+button.row:active .c-success,
+button.row:active .c-danger {
+  color: var(--paper);
+}
+
+@media (hover: hover) {
+  button.row:hover {
+    background: var(--surface);
+  }
+}
+
+.row__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.row__value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.row__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+/* Directional icon badge on a transaction row. */
+.row__badge {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.divider {
+  height: var(--border-width);
+  background: var(--border);
+  border: none;
+  width: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   SectionLabel / StatusTag / EmptyState
+   --------------------------------------------------------------------------- */
+
+.section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+  color: var(--muted);
+}
+
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid currentColor;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.status-tag--solid {
+  background: currentColor;
+  border-color: currentColor;
+}
+
+.status-tag--solid > span {
+  color: var(--paper);
+}
+
+.status-tag--neutral {
+  color: var(--ink);
+}
+.status-tag--success {
+  color: var(--success);
+}
+.status-tag--danger {
+  color: var(--danger);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-sm);
+  padding: var(--space-xl) var(--space-lg);
+}
+
+.empty-state__icon {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--border);
+  color: var(--muted);
+  margin-bottom: var(--space-xs);
+}
+
+/* ---------------------------------------------------------------------------
+   AmountDisplay
+   --------------------------------------------------------------------------- */
+
+.amount {
+  display: flex;
+  flex-direction: column;
+  align-items: inherit;
+}
+
+.amount__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+.amount__asset {
+  color: var(--muted);
+}
+
+.amount__caption {
+  margin-top: var(--space-sm);
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------------
+   ActionTile / ContactChip
+   --------------------------------------------------------------------------- */
+
+.action-tile {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xs);
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-spring);
+}
+
+.action-tile:active {
+  background: var(--ink);
+  color: var(--paper);
+  transform: scale(0.96);
+}
+
+@media (hover: hover) {
+  .action-tile:hover {
+    background: var(--surface);
+  }
+}
+
+.action-tile__label {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.chip {
+  width: 72px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  cursor: pointer;
+  color: var(--ink);
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+
+.chip:active {
+  transform: scale(0.94);
+}
+
+.chip__name {
+  max-width: 100%;
+  text-align: center;
+}
+
+.chip-row {
+  display: flex;
+  gap: var(--space-md);
+  overflow-x: auto;
+  padding-bottom: var(--space-xs);
+}
+
+/* ---------------------------------------------------------------------------
+   SegmentedControl — one filled pill slides beneath the active label.
+   --------------------------------------------------------------------------- */
+
+.segmented {
+  position: relative;
+  display: flex;
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid var(--ink);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.segmented__indicator {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  background: var(--ink);
+  transition: transform var(--duration-base) var(--ease-spring);
+  z-index: 0;
+}
+
+.segmented__option {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: var(--space-sm) var(--space-xs);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  transition: color var(--duration-base) var(--ease-standard);
+  border-left: var(--border-width) solid var(--ink);
+}
+
+.segmented__option:first-child {
+  border-left: none;
+}
+
+.segmented__option[aria-selected='true'] {
+  color: var(--paper);
+}
+
+/* ---------------------------------------------------------------------------
+   KeypadNumeric — square keys, press inverts to filled ink.
+   --------------------------------------------------------------------------- */
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: var(--border-width) solid var(--border);
+  border-left: var(--border-width) solid var(--border);
+}
+
+.keypad__key {
+  min-height: 64px;
+  display: grid;
+  place-items: center;
+  border-right: var(--border-width) solid var(--border);
+  border-bottom: var(--border-width) solid var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--duration-instant) var(--ease-standard),
+    color var(--duration-instant) var(--ease-standard),
+    transform var(--duration-instant) var(--ease-spring);
+}
+
+.keypad__key:active {
+  background: var(--ink);
+  color: var(--paper);
+  transform: scale(0.94);
+}
+
+@media (hover: hover) {
+  .keypad__key:hover {
+    background: var(--surface);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Sheet — backdrop fade + spring up from offscreen.
+   --------------------------------------------------------------------------- */
+
+.sheet__backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  z-index: 100;
+  animation: qp-fade-in var(--duration-base) var(--ease-standard) both;
+}
+
+.sheet {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 101;
+  max-width: var(--app-max-width);
+  margin: 0 auto;
+  background: var(--paper);
+  border-top: var(--border-width-strong) solid var(--ink);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: var(--space-lg);
+  padding-bottom: max(var(--space-lg), env(safe-area-inset-bottom));
+  max-height: 85dvh;
+  overflow-y: auto;
+  animation: qp-sheet-up var(--duration-slow) var(--ease-spring) both;
+}
+
+.sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Toast — inline, non-blocking.
+   --------------------------------------------------------------------------- */
+
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  align-self: flex-start;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--ink);
+  background: var(--paper);
+  box-shadow: var(--elevation-md);
+  animation: qp-slide-up var(--duration-base) var(--ease-decelerate) both;
+}
+
+[data-theme='dark'] .toast {
+  background: var(--surface-raised);
+}
+
+/* ---------------------------------------------------------------------------
+   Notice — the inline warning/error block used across flows.
+   --------------------------------------------------------------------------- */
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--ink);
+  color: var(--ink);
+}
+
+.notice--danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.notice--accent {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.notice__text {
+  flex: 1;
+  min-width: 0;
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------------------------------
+   Layout helpers — these earn their keep by appearing on nearly every screen.
+   --------------------------------------------------------------------------- */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+.stack--xs { gap: var(--space-xs); }
+.stack--sm { gap: var(--space-sm); }
+.stack--md { gap: var(--space-md); }
+.stack--lg { gap: var(--space-lg); }
+.stack--xl { gap: var(--space-xl); }
+
+.cluster {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.spread {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.grow { flex: 1; min-width: 0; }
