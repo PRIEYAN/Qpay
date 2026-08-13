@@ -1,0 +1,6 @@
+{
+  "QpayModule#QpayLedger": "0x077B220DC9106EaD8Fcd4A30B95CAfb712bdBe4B",
+  "QpayModule#QpayOracle": "0x39094eA11969c4A4e312C3083AaE8809408e01bd",
+  "QpayModule#QpayGateway": "0x5a0883E98644e50518b08CDCe0bFaf11f2a79058",
+  "QpayModule#QpaySwap": "0xbf670ced92915ff800B836Cb7Fd6342f05467B15"
+}

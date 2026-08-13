@@ -7,8 +7,8 @@
     "test": "hardhat test",
     "test:solidity": "hardhat test solidity",
     "test:mocha": "hardhat test mocha",
-    "deploy:coston2": "hardhat ignition deploy ignition/modules/Qpay.ts --network coston2",
-    "deploy:flare": "hardhat ignition deploy ignition/modules/Qpay.ts --network flare"
+    "deploy:coston2": "hardhat ignition deploy ignition/modules/Qpay.ts --network coston2 --parameters ignition/parameters/coston2.json",
+    "deploy:flare": "hardhat ignition deploy ignition/modules/Qpay.ts --network flare --parameters ignition/parameters/flare.json"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox-mocha-ethers": "^3.0.0",
