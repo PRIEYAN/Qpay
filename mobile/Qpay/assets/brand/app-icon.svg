@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <title>Qpay App Icon</title>
+  <rect x="0" y="0" width="1024" height="1024" fill="#FFFFFF"/>
+  <g transform="translate(512,512) scale(8.754)">
+    <path fill-rule="evenodd" fill="#000000" d="M -35.092,-3.092 A 32,32 0 1,0 28.908,-3.092 A 32,32 0 1,0 -35.092,-3.092 M -19.092,-3.092 A 16,16 0 1,0 12.908,-3.092 A 16,16 0 1,0 -19.092,-3.092 Z"/>
+    <polygon fill="#000000" points="5.393,16.707 23.778,35.092 35.092,23.778 16.707,5.393"/>
+  </g>
+</svg>

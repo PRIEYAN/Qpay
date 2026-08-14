@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Qpay brand: pure white background for the adaptive icon, paired with
+         the black Q foreground mark (mipmap-anydpi-v26/ic_launcher*.xml).
+         Must stay #FFFFFF per brand rules (strict black/white only). -->
+    <color name="ic_launcher_background">#FFFFFF</color>
+</resources>
